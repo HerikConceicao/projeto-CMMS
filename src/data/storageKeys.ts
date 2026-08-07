@@ -1,0 +1,15 @@
+export const STORAGE_KEYS = {
+  isDesktopMode: 'isDesktopMode',
+  setores: 'setores',
+  tipos: 'tipos',
+  fabricantes: 'fabricantes',
+  modelos: 'modelos',
+  funcoes: 'funcoes',
+  problemas: 'problemas',
+  provisionalAssets: 'provisionalAssets',
+  validatedAssets: 'validatedAssets',
+  ordersOfService: 'ordersOfService',
+  users: 'users',
+  financialSettings: 'financialSettings',
+  currentUserId: 'currentUserId',
+} as const;
