@@ -1,4 +1,4 @@
-import type { AssetCriticality, OSPriority, OSStatus } from '../types';
+import type { AssetCriticality, AssetStatus, OSPriority, OSStatus } from '../types';
 
 export function criticalityClasses(criticality?: AssetCriticality): string {
   switch (criticality) {
@@ -48,4 +48,42 @@ export function statusClasses(status: OSStatus): string {
     case 'Cancelado':
       return 'bg-zinc-500/15 text-zinc-500 border-zinc-500/30';
   }
+}
+
+export const ASSET_STATUS_LABELS: Record<AssetStatus, string> = {
+  pending: 'Pendente',
+  active: 'Ativo',
+  maintenance: 'Em Manutenção',
+  decommissioned: 'Baixado',
+};
+
+export function assetStatusClasses(status: AssetStatus): string {
+  switch (status) {
+    case 'active':
+      return 'bg-green-500/15 text-green-400 border-green-500/30';
+    case 'maintenance':
+      return 'bg-orange-500/15 text-orange-400 border-orange-500/30';
+    case 'decommissioned':
+      return 'bg-zinc-500/15 text-zinc-500 border-zinc-500/30';
+    case 'pending':
+      return 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+  }
+}
+
+export function healthScoreBarClasses(score: number): string {
+  if (score >= 70) return 'bg-green-500';
+  if (score >= 40) return 'bg-amber-500';
+  return 'bg-red-500';
+}
+
+export function healthScoreTextClasses(score: number): string {
+  if (score >= 70) return 'text-green-400';
+  if (score >= 40) return 'text-amber-400';
+  return 'text-red-400';
+}
+
+export function healthScoreLabel(score: number): string {
+  if (score >= 70) return 'Saudável';
+  if (score >= 40) return 'Alerta';
+  return 'Crítico';
 }

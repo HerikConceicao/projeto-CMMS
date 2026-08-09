@@ -6,6 +6,8 @@ import { OpenOSScreen } from './screens/OpenOSScreen';
 import { OSListScreen } from './screens/OSListScreen';
 import { ManageOSScreen } from './screens/ManageOSScreen';
 import { TechnicianPanelScreen } from './screens/TechnicianPanelScreen';
+import { PreRegistrationScreen } from './screens/PreRegistrationScreen';
+import { AssetManagementScreen } from './screens/AssetManagementScreen';
 import { PlaceholderScreen } from './screens/PlaceholderScreen';
 import { QUICK_ACTIONS } from './data/navigation';
 import type { ScreenId } from './types';
@@ -36,6 +38,14 @@ function App() {
 
   if (screen === 'technician-panel') {
     return <TechnicianPanelScreen onExit={() => setScreen('dashboard')} />;
+  }
+
+  if (screen === 'pre-registration') {
+    return <PreRegistrationScreen onExit={() => setScreen('dashboard')} />;
+  }
+
+  if (screen === 'asset-management') {
+    return <AssetManagementScreen onExit={() => setScreen('dashboard')} />;
   }
 
   const title = QUICK_ACTIONS.find((action) => action.id === screen)?.label ?? '';
