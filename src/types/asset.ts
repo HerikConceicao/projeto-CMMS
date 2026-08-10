@@ -15,6 +15,7 @@ export interface Asset {
   locationDetails?: string;
   criticality?: AssetCriticality;
   healthScore?: number; // 0 - 100%
+  residualValue?: number; // valor residual estimado (R$), usado no ranking CAPEX/OPEX
   photos?: string[];
   status: AssetStatus;
   date: string;

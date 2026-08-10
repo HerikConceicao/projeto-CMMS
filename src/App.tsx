@@ -10,6 +10,7 @@ import { PreRegistrationScreen } from './screens/PreRegistrationScreen';
 import { AssetManagementScreen } from './screens/AssetManagementScreen';
 import { ReportAssetScreen } from './screens/ReportAssetScreen';
 import { MachineReleaseScreen } from './screens/MachineReleaseScreen';
+import { IntelligencePanelScreen } from './screens/IntelligencePanelScreen';
 import { PlaceholderScreen } from './screens/PlaceholderScreen';
 import { QUICK_ACTIONS } from './data/navigation';
 import type { ScreenId } from './types';
@@ -56,6 +57,10 @@ function App() {
 
   if (screen === 'machine-release') {
     return <MachineReleaseScreen onExit={() => setScreen('dashboard')} />;
+  }
+
+  if (screen === 'intelligence-panel') {
+    return <IntelligencePanelScreen onExit={() => setScreen('dashboard')} />;
   }
 
   const title = QUICK_ACTIONS.find((action) => action.id === screen)?.label ?? '';
