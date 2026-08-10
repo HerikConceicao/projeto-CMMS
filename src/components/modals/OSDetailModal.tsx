@@ -126,6 +126,13 @@ export function OSDetailModal({ os, assignedToName, onClose }: OSDetailModalProp
             )}
           </div>
         )}
+
+        {os.releaseRejectionReason && (
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3">
+            <p className="mb-1 text-sm font-medium text-red-400">Liberação rejeitada</p>
+            <p className="text-sm text-zinc-300">{os.releaseRejectionReason}</p>
+          </div>
+        )}
       </div>
     </Modal>
   );

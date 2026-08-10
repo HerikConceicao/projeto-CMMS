@@ -96,7 +96,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </div>
             <button
               type="button"
-              onClick={() => onNavigate('manage-os')}
+              onClick={() => onNavigate('machine-release')}
               className="flex h-11 w-full items-center justify-center rounded-lg bg-orange-500 px-4 text-sm font-medium text-zinc-950 transition-colors hover:bg-orange-400 sm:w-auto"
             >
               Resolver agora

@@ -33,4 +33,5 @@ export interface OrderOfService {
   releasedBy?: string;
   laborCost?: number;
   partsCost?: number;
+  releaseRejectionReason?: string; // motivo da última rejeição na liberação de máquina
 }
