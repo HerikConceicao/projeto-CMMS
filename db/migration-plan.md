@@ -6,7 +6,7 @@ Rascunho de como sair do `AppContext` baseado em `useLocalStorage` (src/context/
 
 `AppContext` hoje expõe `{ setores, setSetores, ordersOfService, setOrdersOfService, ... }` para todas as telas. Em vez de reescrever cada tela que chama `useAppContext()`, a estratégia é trocar o **interior** do `AppContext` (de `useLocalStorage` para hooks do Supabase) mantendo a mesma forma de saída sempre que possível. Isso reduz boa parte da "migração tela por tela" a "migração entidade por entidade dentro do Context" — só as telas com comportamento genuinamente novo (fotos, autenticação, tempo real) precisam de mudança própria na tela.
 
-**Pré-requisito de arquitetura**: adotar [TanStack Query](https://tanstack.com/query) para cache/refetch/mutação em vez de state cru. Sem isso, cada tela reimplementa loading/error/refetch na mão. Isto é uma decisão a bater antes da Fase 0.
+**Pré-requisito de arquitetura (confirmado)**: adotar [TanStack Query](https://tanstack.com/query) para cache/refetch/mutação em vez de state cru. Sem isso, cada tela reimplementa loading/error/refetch na mão.
 
 ## Fase 0 — Infraestrutura (nenhuma tela ainda)
 
