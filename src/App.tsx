@@ -12,6 +12,7 @@ import { ReportAssetScreen } from './screens/ReportAssetScreen';
 import { MachineReleaseScreen } from './screens/MachineReleaseScreen';
 import { IntelligencePanelScreen } from './screens/IntelligencePanelScreen';
 import { AuditScreen } from './screens/AuditScreen';
+import { ManageUsersScreen } from './screens/ManageUsersScreen';
 import { PlaceholderScreen } from './screens/PlaceholderScreen';
 import { QUICK_ACTIONS } from './data/navigation';
 import type { ScreenId } from './types';
@@ -66,6 +67,10 @@ function App() {
 
   if (screen === 'audit') {
     return <AuditScreen onExit={() => setScreen('dashboard')} />;
+  }
+
+  if (screen === 'manage-users') {
+    return <ManageUsersScreen onExit={() => setScreen('dashboard')} />;
   }
 
   const title = QUICK_ACTIONS.find((action) => action.id === screen)?.label ?? '';

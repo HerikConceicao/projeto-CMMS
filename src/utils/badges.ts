@@ -1,4 +1,4 @@
-import type { AssetCriticality, AssetStatus, OSPriority, OSStatus } from '../types';
+import type { AssetCriticality, AssetStatus, OSPriority, OSStatus, UserRole } from '../types';
 
 export function criticalityClasses(criticality?: AssetCriticality): string {
   switch (criticality) {
@@ -86,4 +86,23 @@ export function healthScoreLabel(score: number): string {
   if (score >= 70) return 'Saudável';
   if (score >= 40) return 'Alerta';
   return 'Crítico';
+}
+
+export function userRoleClasses(role: UserRole): string {
+  switch (role) {
+    case 'Gestor':
+      return 'bg-orange-500/15 text-orange-400 border-orange-500/30';
+    case 'Liberador':
+      return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+    case 'Técnico':
+      return 'bg-violet-500/15 text-violet-400 border-violet-500/30';
+    case 'Operador':
+      return 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30';
+  }
+}
+
+export function userStatusClasses(status: 'Ativo' | 'Inativo'): string {
+  return status === 'Ativo'
+    ? 'bg-green-500/15 text-green-400 border-green-500/30'
+    : 'bg-zinc-500/15 text-zinc-500 border-zinc-500/30';
 }
