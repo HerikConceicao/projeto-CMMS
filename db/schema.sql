@@ -70,16 +70,14 @@ create table modelos (
   unique (manufacturer_id, name)
 );
 
--- DECISÃO DE DESIGN: hoje "Funções de Usuário" (pré-cadastro) e "Custo de Mão
--- de Obra por Função" (financeiro) são duas listas paralelas que só coincidem
--- por nome ("Técnico Júnior" aparece nas duas, sem vínculo real). Aqui elas
--- foram unificadas numa função só, com taxa horária opcional — evita a
--- duplicação frágil. Se preferir manter as duas listas separadas como hoje,
--- é só voltar a splitar em duas tabelas.
+-- "Funções de Usuário" (pré-cadastro) e "Custo de Mão de Obra por Função"
+-- (financeiro) continuam duas listas separadas, como no frontend hoje —
+-- só coincidem por nome ("Técnico Júnior" aparece nas duas), sem vínculo
+-- real entre elas. role_costs fica definida junto de financial_settings,
+-- mais abaixo, por ser conceitualmente parte das configurações financeiras.
 create table funcoes (
   id            bigint generated always as identity primary key,
   name          text not null unique,
-  hourly_rate   numeric(10, 2),
   created_at    timestamptz not null default now()
 );
 
@@ -180,8 +178,7 @@ create index idx_attachments_entity on attachments (entity_type, entity_id);
 
 -- ----------------------------------------------------------------------------
 -- FINANCIAL SETTINGS
--- Singleton (uma linha só) via CHECK (id = 1). budget_mensal é o único
--- campo que sobra aqui depois que "roles" virou a tabela funcoes acima.
+-- Singleton (uma linha só) via CHECK (id = 1).
 -- ----------------------------------------------------------------------------
 create table financial_settings (
   id             smallint primary key default 1 check (id = 1),
@@ -190,6 +187,15 @@ create table financial_settings (
 );
 
 insert into financial_settings (id, budget_mensal) values (1, 0);
+
+-- Custo de Mão de Obra por Função (tela Configurações Financeiras). Lista
+-- própria, independente de `funcoes` (pré-cadastro) — ver nota acima.
+create table role_costs (
+  id            bigint generated always as identity primary key,
+  name          text not null unique,
+  hourly_rate   numeric(10, 2) not null check (hourly_rate > 0),
+  created_at    timestamptz not null default now()
+);
 
 -- ============================================================================
 -- VIEWS — campos que hoje são "derivados na hora" no frontend (contagens,

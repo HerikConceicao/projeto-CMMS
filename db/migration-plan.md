@@ -15,7 +15,7 @@ Rascunho de como sair do `AppContext` baseado em `useLocalStorage` (src/context/
 - Instalar `@supabase/supabase-js` + `@tanstack/react-query`
 - Variáveis de ambiente (`.env`, `.env.example`) — hoje o projeto não tem nenhuma
 - Seed das tabelas de referência (setores, tipos, fabricantes, modelos, funções, tipos de problema) a partir dos arrays hoje em `src/data/seed/*.ts`, via SQL ou script de migração único
-- **Decisão pendente**: confirmar a fusão `Funcao` + `RoleCost` numa tabela só (proposta no schema, ainda sem seu aval)
+- **Resolvido**: `Funcao` (pré-cadastro) e `RoleCost` (financeiro) ficam como duas listas separadas, igual ao frontend hoje — não serão fundidas
 
 ## Fase 1 — Autenticação e Usuários (bloqueia tudo, vai primeiro)
 
@@ -40,7 +40,7 @@ Setores, Tipos de Equipamento, Fabricantes, Modelos, Funções, Tipos de Problem
 
 ## Fase 3 — Configurações Financeiras
 
-- `FinancialSettingsScreen`, `RoleCostManager`: mesma mecânica da Fase 2, sobre `funcoes` (ou `role_costs`, a depender da decisão pendente) + `financial_settings` (singleton)
+- `FinancialSettingsScreen`, `RoleCostManager`: mesma mecânica da Fase 2, sobre `role_costs` + `financial_settings` (singleton) — `funcoes` (pré-cadastro) já migrou na Fase 2, separada
 
 **Risco**: baixo. **Trabalho**: pequeno. Pode andar em paralelo com a Fase 2.
 
