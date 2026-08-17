@@ -6,6 +6,7 @@ import {
   CalendarCheck,
   Gauge,
   HeartPulse,
+  Settings,
   Timer,
   Wallet,
 } from 'lucide-react';
@@ -15,6 +16,7 @@ import { BudgetChart } from '../components/intelligence/BudgetChart';
 import { HealthDonutChart } from '../components/intelligence/HealthDonutChart';
 import { ReplacementRankingTable } from '../components/intelligence/ReplacementRankingTable';
 import { IndicatorsManualScreen } from './IndicatorsManualScreen';
+import { FinancialSettingsScreen } from './FinancialSettingsScreen';
 import { computeMaintenanceKpis } from '../utils/kpis';
 import { buildMonthlySpend } from '../utils/financeSeries';
 import { buildReplacementRanking } from '../utils/assetReplacement';
@@ -29,9 +31,14 @@ interface IntelligencePanelScreenProps {
 export function IntelligencePanelScreen({ onExit }: IntelligencePanelScreenProps) {
   const { ordersOfService, validatedAssets, financialSettings, isDesktopMode } = useAppContext();
   const [showManual, setShowManual] = useState(false);
+  const [showFinancialSettings, setShowFinancialSettings] = useState(false);
 
   if (showManual) {
     return <IndicatorsManualScreen onExit={() => setShowManual(false)} />;
+  }
+
+  if (showFinancialSettings) {
+    return <FinancialSettingsScreen onExit={() => setShowFinancialSettings(false)} />;
   }
 
   const kpis = computeMaintenanceKpis(ordersOfService);
@@ -106,17 +113,27 @@ export function IntelligencePanelScreen({ onExit }: IntelligencePanelScreenProps
               <Wallet className="h-4 w-4 text-orange-500" />
               Finanças da Manutenção
             </h2>
-            <p className="text-xs text-zinc-500">
-              Orçamento mensal: <span className="text-zinc-300">{formatBRL(financialSettings.budgetMensal)}</span>
-              {' · '}Gasto no mês atual:{' '}
-              <span
-                className={
-                  currentMonthSpend > financialSettings.budgetMensal ? 'text-red-400' : 'text-zinc-300'
-                }
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="text-xs text-zinc-500">
+                Orçamento mensal: <span className="text-zinc-300">{formatBRL(financialSettings.budgetMensal)}</span>
+                {' · '}Gasto no mês atual:{' '}
+                <span
+                  className={
+                    currentMonthSpend > financialSettings.budgetMensal ? 'text-red-400' : 'text-zinc-300'
+                  }
+                >
+                  {formatBRL(currentMonthSpend)}
+                </span>
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowFinancialSettings(true)}
+                className="flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 text-xs text-zinc-300 transition-colors hover:border-zinc-700 hover:bg-zinc-800"
               >
-                {formatBRL(currentMonthSpend)}
-              </span>
-            </p>
+                <Settings className="h-3.5 w-3.5" />
+                Configurar
+              </button>
+            </div>
           </div>
           <BudgetChart data={monthlySpend} />
         </section>
