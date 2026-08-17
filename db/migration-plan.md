@@ -10,12 +10,14 @@ Rascunho de como sair do `AppContext` baseado em `useLocalStorage` (src/context/
 
 ## Fase 0 — Infraestrutura (nenhuma tela ainda)
 
-- Criar projeto Supabase, aplicar `db/schema.sql`
-- Gerar types TS do schema (`supabase gen types typescript`)
-- Instalar `@supabase/supabase-js` + `@tanstack/react-query`
-- Variáveis de ambiente (`.env`, `.env.example`) — hoje o projeto não tem nenhuma
-- Seed das tabelas de referência (setores, tipos, fabricantes, modelos, funções, tipos de problema) a partir dos arrays hoje em `src/data/seed/*.ts`, via SQL ou script de migração único
-- **Resolvido**: `Funcao` (pré-cadastro) e `RoleCost` (financeiro) ficam como duas listas separadas, igual ao frontend hoje — não serão fundidas
+- [x] Instalar `@supabase/supabase-js` + `@tanstack/react-query`
+- [x] `QueryClientProvider` conectado em `src/main.tsx` (ainda sem nenhuma query — só infraestrutura)
+- [x] `src/lib/supabaseClient.ts` criado (não importado por nenhuma tela ainda; só passa a ser usado a partir da Fase 1)
+- [x] `.env.example` + `.gitignore` atualizado para nunca commitar `.env`
+- [x] `db/seed_reference_data.sql` — seed das 6 tabelas de referência (setores, tipos, fabricantes, modelos, funções, tipos de problema), espelhando `src/data/seed/*.ts` com os mesmos ids
+- [x] **Resolvido**: `Funcao` (pré-cadastro) e `RoleCost` (financeiro) ficam como duas listas separadas, igual ao frontend hoje — não serão fundidas
+- [ ] **Depende de você**: criar o projeto no painel do Supabase, aplicar `db/schema.sql` e depois `db/seed_reference_data.sql` no SQL Editor (ou via CLI), copiar `.env.example` para `.env` com a URL/chave reais
+- [ ] Gerar types TS do schema (`supabase gen types typescript`) — só é possível depois que o projeto real existir
 
 ## Fase 1 — Autenticação e Usuários (bloqueia tudo, vai primeiro)
 
