@@ -16,6 +16,7 @@ export const seedOrdersOfService: OrderOfService[] = [
     estimatedTime: '4h',
     description: 'Motor apresentando superaquecimento e ruído anormal durante operação.',
     isMachineStopped: true,
+    attendedAt: '2026-08-05T09:05:00',
     horimeterStart: 12450,
   },
   {
@@ -33,6 +34,7 @@ export const seedOrdersOfService: OrderOfService[] = [
     estimatedTime: '5h',
     description: 'Vazamento de óleo hidráulico identificado na base da prensa.',
     isMachineStopped: true,
+    attendedAt: '2026-08-03T14:20:00',
     horimeterStart: 8830,
     horimeterEnd: 8834,
     executionReport:
@@ -70,6 +72,7 @@ export const seedOrdersOfService: OrderOfService[] = [
     estimatedTime: '1h',
     description: 'Lubrificação geral e ajuste de tensão da correia.',
     isMachineStopped: false,
+    attendedAt: '2026-07-20T09:40:00',
     horimeterStart: 5510,
     horimeterEnd: 5511,
     executionReport: 'Lubrificação realizada, tensão ajustada conforme manual do fabricante.',
@@ -93,6 +96,7 @@ export const seedOrdersOfService: OrderOfService[] = [
     estimatedTime: '3h',
     description: 'Falha elétrica no painel de controle, empilhadeira não liga.',
     isMachineStopped: true,
+    attendedAt: '2026-07-15T11:10:00',
     horimeterStart: 3200,
     horimeterEnd: 3200,
     executionReport: 'Substituído fusível principal e cabo de alimentação da bateria.',
@@ -116,6 +120,7 @@ export const seedOrdersOfService: OrderOfService[] = [
     estimatedTime: '3h',
     description: 'Análise de vibração indicou desgaste de rolamento - intervenção preditiva agendada.',
     isMachineStopped: false,
+    attendedAt: '2026-08-04T14:45:00',
     horimeterStart: 9100,
   },
   {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, CheckCircle2, X } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { StepIndicator } from '../components/ui/StepIndicator';
@@ -29,6 +29,15 @@ export function TechnicianExecutionScreen({ os, onExit }: TechnicianExecutionScr
   const { setOrdersOfService, isDesktopMode } = useAppContext();
   const [step, setStep] = useState<WizardStep>('checklist');
   const [executionData, setExecutionData] = useState<ExecutionStepValue | null>(null);
+
+  useEffect(() => {
+    if (os.attendedAt) return;
+    const attendedAt = new Date().toISOString();
+    setOrdersOfService((prev) =>
+      prev.map((order) => (order.id === os.id ? { ...order, attendedAt } : order)),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [os.id]);
 
   const handleExecutionSubmit = (value: ExecutionStepValue) => {
     setExecutionData(value);

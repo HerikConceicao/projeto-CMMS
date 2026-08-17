@@ -20,19 +20,10 @@ import { buildMonthlySpend } from '../utils/financeSeries';
 import { buildReplacementRanking } from '../utils/assetReplacement';
 import { buildHealthDistribution } from '../utils/healthDistribution';
 import { formatBRL } from '../utils/currency';
+import { formatHours, formatPercent as formatPct } from '../utils/formatMetrics';
 
 interface IntelligencePanelScreenProps {
   onExit: () => void;
-}
-
-function formatHours(value: number | null): string {
-  if (value === null) return '—';
-  return `${Math.round(value)}h`;
-}
-
-function formatPct(value: number | null): string {
-  if (value === null) return '—';
-  return `${value.toFixed(0)}%`;
 }
 
 export function IntelligencePanelScreen({ onExit }: IntelligencePanelScreenProps) {

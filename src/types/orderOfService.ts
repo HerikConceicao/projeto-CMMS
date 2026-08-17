@@ -23,6 +23,7 @@ export interface OrderOfService {
   type: OSType;
   estimatedTime?: string;
   description: string;
+  attendedAt?: string; // quando o técnico iniciou o atendimento presencial
   reportPhotos?: string[]; // fotos da falha, anexadas na abertura da OS
   isMachineStopped: boolean;
   horimeterStart?: number;
