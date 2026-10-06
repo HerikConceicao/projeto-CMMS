@@ -14,10 +14,6 @@ type RoleFilter = UserRole | 'Todos';
 
 const ROLES: UserRole[] = ['Gestor', 'Técnico', 'Liberador', 'Operador'];
 
-function nextUserId(users: User[]): number {
-  return (users.length > 0 ? Math.max(...users.map((u) => u.id)) : 0) + 1;
-}
-
 export function ManageUsersScreen({ onExit }: ManageUsersScreenProps) {
   const { users, setUsers, ordersOfService, currentUser, isDesktopMode } = useAppContext();
 
@@ -69,7 +65,8 @@ export function ManageUsersScreen({ onExit }: ManageUsersScreenProps) {
     } else {
       setUsers((prev) => [
         ...prev,
-        { id: nextUserId(prev), osCreated: 0, osOpen: 0, ...value },
+        // id é descartado em AppContext.setUsers antes do insert; o banco gera o real.
+        { id: -1, osCreated: 0, osOpen: 0, ...value },
       ]);
     }
     setFormMode(null);

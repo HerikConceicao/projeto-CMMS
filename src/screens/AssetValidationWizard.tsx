@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, CheckCircle2, X } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { PhotoGallery } from '../components/ui/PhotoGallery';
 import { StepIndicator } from '../components/ui/StepIndicator';
 import { ClassificationStep } from '../components/wizards/AssetValidation/ClassificationStep';
 import { TechSpecsStep } from '../components/wizards/AssetValidation/TechSpecsStep';
@@ -50,8 +51,8 @@ interface ValidationDraft {
 }
 
 export function AssetValidationWizard({ asset, onExit }: AssetValidationWizardProps) {
-  const { setores, tipos, fabricantes, modelos, validatedAssets, setValidatedAssets, setProvisionalAssets, isDesktopMode } =
-    useAppContext();
+  const { setores, tipos, fabricantes, modelos, assets, setAssets, isDesktopMode } = useAppContext();
+  const validatedAssets = assets.filter((a) => a.status !== 'pending');
 
   const [step, setStep] = useState<WizardStep>('classification');
   const [draft, setDraft] = useState<ValidationDraft>({
@@ -86,8 +87,7 @@ export function AssetValidationWizard({ asset, onExit }: AssetValidationWizardPr
       noTag: false,
     };
 
-    setValidatedAssets((prev) => [...prev, finalAsset]);
-    setProvisionalAssets((prev) => prev.filter((a) => a.id !== asset.id));
+    setAssets((prev) => prev.map((a) => (a.id === asset.id ? finalAsset : a)));
     setStep('success');
   };
 
@@ -110,6 +110,10 @@ export function AssetValidationWizard({ asset, onExit }: AssetValidationWizardPr
         </header>
 
         {step !== 'success' && <StepIndicator steps={STEP_LABELS} currentIndex={STEP_INDEX[step]} />}
+
+        {step === 'classification' && asset.photos && asset.photos.length > 0 && (
+          <PhotoGallery title="Fotos reportadas" photos={asset.photos} />
+        )}
 
         {step === 'classification' && (
           <ClassificationStep

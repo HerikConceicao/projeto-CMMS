@@ -1,11 +1,13 @@
 /**
- * Lê um arquivo de imagem e retorna um data URL redimensionado/comprimido,
- * evitando estourar a cota do localStorage com fotos de câmera em resolução total.
+ * Lê um arquivo de imagem e retorna um data URL redimensionado/comprimido
+ * (lado maior ≤ maxSide), evitando manter na memória fotos de câmera em
+ * resolução total. O upload ao Storage ainda passa por `compressDataUrl`
+ * (src/lib/photoStorage.ts), que usa os mesmos limites como rede de segurança.
  */
 export function fileToCompressedDataUrl(
   file: File,
-  maxWidth = 800,
-  quality = 0.7,
+  maxSide = 1280,
+  quality = 0.72,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -14,7 +16,7 @@ export function fileToCompressedDataUrl(
       const img = new Image();
       img.onerror = () => reject(new Error('Falha ao carregar a imagem.'));
       img.onload = () => {
-        const scale = Math.min(1, maxWidth / img.width);
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
         const width = Math.round(img.width * scale);
         const height = Math.round(img.height * scale);
 

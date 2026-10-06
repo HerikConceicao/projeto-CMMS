@@ -29,7 +29,8 @@ interface IntelligencePanelScreenProps {
 }
 
 export function IntelligencePanelScreen({ onExit }: IntelligencePanelScreenProps) {
-  const { ordersOfService, validatedAssets, financialSettings, isDesktopMode } = useAppContext();
+  const { ordersOfService, assets, financialSettings, isDesktopMode } = useAppContext();
+  const validatedAssets = assets.filter((a) => a.status !== 'pending');
   const [showManual, setShowManual] = useState(false);
   const [showFinancialSettings, setShowFinancialSettings] = useState(false);
 

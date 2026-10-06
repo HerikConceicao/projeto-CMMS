@@ -3,6 +3,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import type { Asset } from '../../types';
 import { Modal } from '../ui/Modal';
 import { InfoRow } from '../ui/InfoRow';
+import { PhotoGallery } from '../ui/PhotoGallery';
 import {
   ASSET_STATUS_LABELS,
   assetStatusClasses,
@@ -78,6 +79,10 @@ export function AssetDetailModal({ asset, onClose }: AssetDetailModalProps) {
           <InfoRow label="Ordens de serviço" value={String(asset.osCount ?? 0)} />
           <InfoRow label="Validado em" value={formatDate(asset.date)} />
         </div>
+
+        {asset.photos && asset.photos.length > 0 && (
+          <PhotoGallery title="Fotos do ativo" photos={asset.photos} />
+        )}
       </div>
     </Modal>
   );

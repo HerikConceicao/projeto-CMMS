@@ -6,10 +6,6 @@ export const STORAGE_KEYS = {
   modelos: 'modelos',
   funcoes: 'funcoes',
   problemas: 'problemas',
-  provisionalAssets: 'provisionalAssets',
-  validatedAssets: 'validatedAssets',
-  ordersOfService: 'ordersOfService',
   users: 'users',
-  financialSettings: 'financialSettings',
   currentUserId: 'currentUserId',
 } as const;

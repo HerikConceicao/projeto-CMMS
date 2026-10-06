@@ -9,14 +9,13 @@ interface ReportAssetScreenProps {
   onExit: () => void;
 }
 
-function nextAssetId(a: Asset[], b: Asset[]): number {
-  const ids = [...a, ...b].map((asset) => asset.id);
+function nextAssetId(all: Asset[]): number {
+  const ids = all.map((asset) => asset.id);
   return (ids.length > 0 ? Math.max(...ids) : 0) + 1;
 }
 
 export function ReportAssetScreen({ onExit }: ReportAssetScreenProps) {
-  const { setores, validatedAssets, provisionalAssets, setProvisionalAssets, currentUser, isDesktopMode } =
-    useAppContext();
+  const { setores, assets, setAssets, currentUser, isDesktopMode } = useAppContext();
 
   const [photos, setPhotos] = useState<string[]>([]);
   const [name, setName] = useState('');
@@ -52,7 +51,7 @@ export function ReportAssetScreen({ onExit }: ReportAssetScreenProps) {
     }
 
     const newAsset: Asset = {
-      id: nextAssetId(validatedAssets, provisionalAssets),
+      id: nextAssetId(assets),
       name: name.trim(),
       sector,
       assetNumber: noTag ? '' : assetNumber.trim(),
@@ -63,7 +62,7 @@ export function ReportAssetScreen({ onExit }: ReportAssetScreenProps) {
       photos: photos.length > 0 ? photos : undefined,
     };
 
-    setProvisionalAssets((prev) => [...prev, newAsset]);
+    setAssets((prev) => [...prev, newAsset]);
     setSubmitted(true);
   };
 
