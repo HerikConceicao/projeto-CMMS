@@ -1,5 +1,6 @@
 import { ArrowLeft, Printer } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { assetQrValue } from '../../../utils/qr';
 
 export interface LabelPreviewValue {
   name: string;
@@ -25,7 +26,7 @@ export function QrLabelStep({ value, onBack, onConfirm }: QrLabelStepProps) {
 
       <div className="flex justify-center rounded-xl border border-zinc-800 bg-zinc-900 p-6">
         <div className="print-area flex w-48 flex-col items-center gap-2 rounded-lg border border-zinc-700 bg-white p-4 text-center">
-          <QRCodeSVG value={value.assetNumber} size={128} level="M" />
+          <QRCodeSVG value={assetQrValue(value.assetNumber)} size={128} level="M" />
           <p className="text-sm font-bold text-zinc-950">{value.assetNumber}</p>
           <p className="line-clamp-2 text-xs text-zinc-700">{value.name}</p>
           <p className="text-xs text-zinc-500">{value.sector}</p>

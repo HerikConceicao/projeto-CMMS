@@ -15,11 +15,19 @@ import { AuditScreen } from './screens/AuditScreen';
 import { ManageUsersScreen } from './screens/ManageUsersScreen';
 import { PlaceholderScreen } from './screens/PlaceholderScreen';
 import { QUICK_ACTIONS } from './data/navigation';
+import { clearAssetTagFromLocation, readAssetTagFromLocation } from './utils/qr';
 import type { ScreenId } from './types';
 
 function App() {
   const { currentUser, authLoading } = useAppContext();
-  const [screen, setScreen] = useState<ScreenId>('dashboard');
+  // Link do QR Code (?ativo=TAG): depois do login, abre direto a abertura de OS desse ativo.
+  const [pendingAssetTag, setPendingAssetTag] = useState<string | null>(readAssetTagFromLocation);
+  const [screen, setScreen] = useState<ScreenId>(pendingAssetTag ? 'open-os' : 'dashboard');
+
+  const consumeAssetTag = () => {
+    clearAssetTagFromLocation();
+    setPendingAssetTag(null);
+  };
 
   if (authLoading) {
     return (
@@ -38,7 +46,16 @@ function App() {
   }
 
   if (screen === 'open-os') {
-    return <OpenOSScreen onExit={() => setScreen('dashboard')} />;
+    return (
+      <OpenOSScreen
+        initialAssetTag={pendingAssetTag}
+        onInitialAssetTagHandled={consumeAssetTag}
+        onExit={() => {
+          consumeAssetTag();
+          setScreen('dashboard');
+        }}
+      />
+    );
   }
 
   if (screen === 'os-list') {

@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { AlertCircle, QrCode, ScanLine, Search, Tag } from 'lucide-react';
 import type { Asset } from '../../../types';
 import { criticalityClasses } from '../../../utils/badges';
+import { parseAssetTagFromQr } from '../../../utils/qr';
 
 interface AssetIdentificationStepProps {
   assets: Asset[];
@@ -70,9 +71,9 @@ function QrScanPanel({ assets, onSelect }: AssetIdentificationStepProps) {
 
   const handleManualCodeSubmit = (event: FormEvent) => {
     event.preventDefault();
-    const asset = assets.find(
-      (a) => a.assetNumber.trim().toLowerCase() === manualCode.trim().toLowerCase(),
-    );
+    // Aceita a TAG pura ou o conteúdo completo do QR (endereço com ?ativo=TAG).
+    const code = (parseAssetTagFromQr(manualCode) ?? '').toLowerCase();
+    const asset = assets.find((a) => a.assetNumber.trim().toLowerCase() === code);
     if (!asset) {
       setCodeError('Nenhum ativo encontrado com essa TAG.');
       return;

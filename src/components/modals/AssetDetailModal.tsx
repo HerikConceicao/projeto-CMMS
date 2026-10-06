@@ -1,5 +1,6 @@
 import { Printer } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { assetQrValue } from '../../utils/qr';
 import type { Asset } from '../../types';
 import { Modal } from '../ui/Modal';
 import { InfoRow } from '../ui/InfoRow';
@@ -37,7 +38,7 @@ export function AssetDetailModal({ asset, onClose }: AssetDetailModalProps) {
 
         <div className="flex justify-center">
           <div className="print-area flex w-40 flex-col items-center gap-1.5 rounded-lg border border-zinc-700 bg-white p-3 text-center">
-            <QRCodeSVG value={asset.assetNumber} size={104} level="M" />
+            <QRCodeSVG value={assetQrValue(asset.assetNumber)} size={104} level="M" />
             <p className="text-xs font-bold text-zinc-950">{asset.assetNumber}</p>
             <p className="line-clamp-2 text-[10px] text-zinc-700">{asset.name}</p>
           </div>
