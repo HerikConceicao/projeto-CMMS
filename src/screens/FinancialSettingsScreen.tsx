@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import type { FocusEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, Info, Wallet } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { CurrencyInput } from '../components/ui/CurrencyInput';
 import { RoleCostManager, slugify } from '../components/financial/RoleCostManager';
 import { formatBRL } from '../utils/currency';
 
@@ -23,9 +23,15 @@ export function FinancialSettingsScreen({ onExit }: FinancialSettingsScreenProps
   const [budgetInput, setBudgetInput] = useState(String(financialSettings.budgetMensal));
   const [budgetError, setBudgetError] = useState<string | null>(null);
 
-  const commitBudget = (event: FocusEvent<HTMLInputElement>) => {
-    const value = Number(event.target.value);
-    if (!event.target.value.trim() || Number.isNaN(value) || value < 0) {
+  // O orçamento vem do banco (pode chegar depois da montagem da tela, ou ser
+  // alterado em outro aparelho) — mantém o campo em dia com o valor salvo.
+  useEffect(() => {
+    setBudgetInput(String(financialSettings.budgetMensal));
+  }, [financialSettings.budgetMensal]);
+
+  const commitBudget = () => {
+    const value = Number(budgetInput);
+    if (!budgetInput.trim() || Number.isNaN(value) || value < 0) {
       setBudgetError('Informe um valor de orçamento válido.');
       setBudgetInput(String(financialSettings.budgetMensal));
       return;
@@ -63,14 +69,10 @@ export function FinancialSettingsScreen({ onExit }: FinancialSettingsScreenProps
             <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500">
               R$
             </span>
-            <input
-              type="number"
-              min={0}
-              step="100"
-              inputMode="decimal"
+            <CurrencyInput
               value={budgetInput}
-              onChange={(e) => {
-                setBudgetInput(e.target.value);
+              onChange={(v) => {
+                setBudgetInput(v);
                 if (budgetError) setBudgetError(null);
               }}
               onBlur={commitBudget}

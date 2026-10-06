@@ -18,8 +18,16 @@ import { QUICK_ACTIONS } from './data/navigation';
 import type { ScreenId } from './types';
 
 function App() {
-  const { currentUser } = useAppContext();
+  const { currentUser, authLoading } = useAppContext();
   const [screen, setScreen] = useState<ScreenId>('dashboard');
+
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-950">
+        <p className="text-sm text-zinc-500">Carregando...</p>
+      </div>
+    );
+  }
 
   if (!currentUser) {
     return <LoginScreen />;

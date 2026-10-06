@@ -5,32 +5,12 @@ import { InfoRow } from '../ui/InfoRow';
 import { PRIORITY_LABELS, priorityClasses, statusClasses } from '../../utils/badges';
 import { formatDateTime } from '../../utils/date';
 import { formatBRL } from '../../utils/currency';
+import { PhotoGallery } from '../ui/PhotoGallery';
 
 interface OSDetailModalProps {
   os: OrderOfService;
   assignedToName?: string;
   onClose: () => void;
-}
-
-function PhotoGallery({ title, photos }: { title: string; photos: string[] }) {
-  return (
-    <div>
-      <p className="mb-2 text-sm font-medium text-zinc-300">{title}</p>
-      <div className="flex flex-wrap gap-2">
-        {photos.map((photo, index) => (
-          <a
-            key={index}
-            href={photo}
-            target="_blank"
-            rel="noreferrer"
-            className="block h-20 w-20 overflow-hidden rounded-lg border border-zinc-800"
-          >
-            <img src={photo} alt={`${title} ${index + 1}`} className="h-full w-full object-cover" />
-          </a>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 export function OSDetailModal({ os, assignedToName, onClose }: OSDetailModalProps) {

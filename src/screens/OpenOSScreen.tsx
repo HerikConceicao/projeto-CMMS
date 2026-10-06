@@ -26,8 +26,9 @@ const STEP_INDEX: Record<WizardStep, number> = {
 };
 
 export function OpenOSScreen({ onExit }: OpenOSScreenProps) {
-  const { validatedAssets, problemas, ordersOfService, setOrdersOfService, currentUser, isDesktopMode } =
+  const { assets, problemas, ordersOfService, setOrdersOfService, currentUser, isDesktopMode } =
     useAppContext();
+  const validatedAssets = assets.filter((a) => a.status !== 'pending');
 
   const [step, setStep] = useState<WizardStep>('identify');
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);

@@ -21,7 +21,7 @@
 -- nas policies de RLS sem parsear JSON a cada checagem.
 -- ----------------------------------------------------------------------------
 create table users (
-  id                uuid primary key default gen_random_uuid(),
+  id                bigint generated always as identity primary key,
   auth_user_id      uuid unique references auth.users (id) on delete set null,
   name              text not null,
   role              text not null check (role in ('Gestor', 'Técnico', 'Liberador', 'Operador')),
@@ -98,7 +98,7 @@ create table assets (
   sector_id          bigint references setores (id) on delete restrict,
   asset_number       text not null unique,
   no_tag             boolean not null default false,
-  reported_by_id     uuid references users (id) on delete set null,
+  reported_by_id     bigint references users (id) on delete set null,
   type_id            bigint references tipos_equipamento (id) on delete restrict,
   manufacturer_id    bigint references fabricantes (id) on delete restrict,
   model_id           bigint references modelos (id) on delete restrict,
@@ -135,9 +135,9 @@ create table orders_of_service (
   status                   text not null default 'Aberto'
                              check (status in ('Aberto', 'Em Andamento', 'Pendente Validação', 'Concluído', 'Cancelado')),
   type                     text not null check (type in ('Preventiva', 'Corretiva', 'Preditiva')),
-  created_by_id            uuid not null references users (id) on delete restrict,
-  assigned_to_id           uuid references users (id) on delete set null,
-  released_by_id           uuid references users (id) on delete set null,
+  created_by_id            bigint not null references users (id) on delete restrict,
+  assigned_to_id           bigint references users (id) on delete set null,
+  released_by_id           bigint references users (id) on delete set null,
   estimated_time           text,
   description              text not null,
   is_machine_stopped       boolean not null default false,
@@ -170,7 +170,7 @@ create table attachments (
   entity_type    text not null check (entity_type in ('asset', 'os_report', 'os_execution')),
   entity_id      bigint not null,
   storage_path   text not null,
-  uploaded_by_id uuid references users (id) on delete set null,
+  uploaded_by_id bigint references users (id) on delete set null,
   created_at     timestamptz not null default now()
 );
 

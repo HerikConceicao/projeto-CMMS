@@ -1,87 +1,66 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { ArrowLeft, Briefcase, Phone, ShieldCheck, Wrench } from 'lucide-react';
+import { KeyRound, Lock, Mail, UserPlus, Wrench } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-import { OtpInput } from '../components/ui/OtpInput';
-import { formatPhoneBR, isValidPhoneBR } from '../utils/phone';
 
-const DEMO_OTP_CODE = '1234';
-
-type LoginStep = 'phone' | 'otp';
+type Mode = 'login' | 'signup';
 
 export function LoginScreen() {
-  const { users, login } = useAppContext();
+  const { login, signUpFirstAccess } = useAppContext();
 
-  const [step, setStep] = useState<LoginStep>('phone');
-  const [phone, setPhone] = useState('');
-  const [phoneError, setPhoneError] = useState<string | null>(null);
-  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [mode, setMode] = useState<Mode>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [matchedUserId, setMatchedUserId] = useState<number | null>(null);
-  const [otp, setOtp] = useState('');
-  const [otpError, setOtpError] = useState<string | null>(null);
-  const [otpAttempt, setOtpAttempt] = useState(0);
-  const [resendMessage, setResendMessage] = useState<string | null>(null);
-
-  const handlePhoneChange = (raw: string) => {
-    setPhone(formatPhoneBR(raw));
-    if (phoneError) setPhoneError(null);
+  const resetMessages = () => {
+    setError(null);
+    setInfo(null);
   };
 
-  const handlePhoneSubmit = (event: FormEvent) => {
+  const switchMode = (next: Mode) => {
+    setMode(next);
+    setPassword('');
+    setConfirmPassword('');
+    resetMessages();
+  };
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    resetMessages();
 
-    if (!isValidPhoneBR(phone)) {
-      setPhoneError('Informe um telefone válido no formato (XX) XXXXX-XXXX.');
+    if (!email.trim()) {
+      setError('Informe seu e-mail.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('A senha precisa ter pelo menos 6 caracteres.');
+      return;
+    }
+    if (mode === 'signup' && password !== confirmPassword) {
+      setError('As senhas não conferem.');
       return;
     }
 
-    const user = users.find((u) => u.phone === phone);
-    if (!user) {
-      setPhoneError('Telefone não cadastrado no sistema.');
+    setIsSubmitting(true);
+    const errorMessage =
+      mode === 'login'
+        ? await login(email.trim(), password)
+        : await signUpFirstAccess(email.trim(), password);
+    setIsSubmitting(false);
+
+    if (errorMessage) {
+      setError(errorMessage);
       return;
     }
-    if (user.status === 'Inativo') {
-      setPhoneError('Este usuário está inativo. Contate o gestor.');
-      return;
+
+    if (mode === 'signup') {
+      setInfo('Conta criada! Verifique seu e-mail para confirmar o acesso e depois faça login.');
+      switchMode('login');
     }
-
-    setIsSendingCode(true);
-    window.setTimeout(() => {
-      setIsSendingCode(false);
-      setMatchedUserId(user.id);
-      setStep('otp');
-    }, 500);
-  };
-
-  const handleOtpComplete = (code: string) => {
-    if (code !== DEMO_OTP_CODE) {
-      setOtpError('Código inválido. Tente novamente.');
-      setOtp('');
-      setOtpAttempt((n) => n + 1);
-      return;
-    }
-    if (matchedUserId !== null) login(matchedUserId);
-  };
-
-  const handleBackToPhone = () => {
-    setStep('phone');
-    setOtp('');
-    setOtpError(null);
-    setMatchedUserId(null);
-  };
-
-  const handleResend = () => {
-    setOtp('');
-    setOtpError(null);
-    setOtpAttempt((n) => n + 1);
-    setResendMessage('Código reenviado.');
-    window.setTimeout(() => setResendMessage(null), 2500);
-  };
-
-  const handleSimulateLogin = (role: 'Gestor' | 'Técnico') => {
-    const user = users.find((u) => u.role === role && u.status === 'Ativo');
-    if (user) login(user.id);
   };
 
   return (
@@ -95,120 +74,117 @@ export function LoginScreen() {
           <p className="text-sm text-zinc-500">Gestão de Ativos & Manutenção</p>
         </div>
 
-        {step === 'phone' ? (
-          <form onSubmit={handlePhoneSubmit} noValidate>
-            <label htmlFor="phone" className="mb-2 block text-sm font-medium text-zinc-300">
-              Número de telefone
-            </label>
-            <div className="relative">
-              <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-              <input
-                id="phone"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                placeholder="(11) 98888-0001"
-                value={phone}
-                onChange={(e) => handlePhoneChange(e.target.value)}
-                maxLength={15}
-                className="h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 pl-10 pr-3 text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-              />
-            </div>
-            {phoneError ? (
-              <p className="mt-2 text-sm text-red-500">{phoneError}</p>
-            ) : (
-              <p className="mt-2 text-xs text-zinc-600">
-                Demo: (11) 98888-0001 (Gestor) ou (11) 98888-0003 (Técnico)
-              </p>
-            )}
+        <div className="mb-6 flex rounded-lg border border-zinc-800 bg-zinc-950 p-1">
+          <button
+            type="button"
+            onClick={() => switchMode('login')}
+            className={`flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md text-sm font-medium transition-colors ${
+              mode === 'login' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            <KeyRound className="h-3.5 w-3.5" />
+            Entrar
+          </button>
+          <button
+            type="button"
+            onClick={() => switchMode('signup')}
+            className={`flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md text-sm font-medium transition-colors ${
+              mode === 'signup' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            <UserPlus className="h-3.5 w-3.5" />
+            Primeiro acesso
+          </button>
+        </div>
 
-            <button
-              type="submit"
-              disabled={isSendingCode}
-              className="mt-4 flex h-11 w-full items-center justify-center rounded-lg bg-orange-500 font-medium text-zinc-950 transition-colors hover:bg-orange-400 disabled:opacity-60"
-            >
-              {isSendingCode ? 'Enviando código...' : 'Enviar código'}
-            </button>
+        <form onSubmit={handleSubmit} noValidate>
+          {mode === 'signup' && (
+            <p className="mb-4 text-xs text-zinc-500">
+              Use o mesmo e-mail que o gestor cadastrou para você em "Gerenciar Usuários" e crie
+              uma senha de acesso.
+            </p>
+          )}
 
-            <div className="my-6 flex items-center gap-3">
-              <div className="h-px flex-1 bg-zinc-800" />
-              <span className="text-xs text-zinc-600">ou entre direto</span>
-              <div className="h-px flex-1 bg-zinc-800" />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={() => handleSimulateLogin('Gestor')}
-                className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-zinc-700 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
-              >
-                <Briefcase className="h-4 w-4" />
-                Entrar como Gestor/Liberador
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSimulateLogin('Técnico')}
-                className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-zinc-700 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
-              >
-                <Wrench className="h-4 w-4" />
-                Entrar como Técnico
-              </button>
-            </div>
-          </form>
-        ) : (
-          <div>
-            <button
-              type="button"
-              onClick={handleBackToPhone}
-              className="mb-4 flex items-center gap-1 text-sm text-zinc-500 transition-colors hover:text-zinc-300"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Alterar número
-            </button>
-
-            <div className="mb-6 flex flex-col items-center text-center">
-              <ShieldCheck className="mb-2 h-8 w-8 text-orange-500" />
-              <p className="text-sm text-zinc-300">
-                Enviamos um código para <span className="font-medium text-zinc-100">{phone}</span>
-              </p>
-              <p className="mt-1 text-xs text-zinc-600">Código de demonstração: {DEMO_OTP_CODE}</p>
-            </div>
-
-            <OtpInput
-              key={otpAttempt}
-              length={4}
-              value={otp}
-              onChange={(value) => {
-                setOtp(value);
-                if (otpError) setOtpError(null);
+          <label htmlFor="email" className="mb-2 block text-sm font-medium text-zinc-300">
+            E-mail
+          </label>
+          <div className="relative mb-4">
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+            <input
+              id="email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder="nome@empresa.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                resetMessages();
               }}
-              onComplete={handleOtpComplete}
-              error={!!otpError}
+              className="h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 pl-10 pr-3 text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
             />
-
-            <div className="mt-3 min-h-5 text-center">
-              {otpError && <p className="text-sm text-red-500">{otpError}</p>}
-              {resendMessage && <p className="text-sm text-green-500">{resendMessage}</p>}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => handleOtpComplete(otp)}
-              disabled={otp.length !== 4}
-              className="mt-4 flex h-11 w-full items-center justify-center rounded-lg bg-orange-500 font-medium text-zinc-950 transition-colors hover:bg-orange-400 disabled:opacity-60"
-            >
-              Confirmar
-            </button>
-
-            <button
-              type="button"
-              onClick={handleResend}
-              className="mt-3 w-full text-center text-sm text-zinc-500 transition-colors hover:text-zinc-300"
-            >
-              Reenviar código
-            </button>
           </div>
-        )}
+
+          <label htmlFor="password" className="mb-2 block text-sm font-medium text-zinc-300">
+            Senha
+          </label>
+          <div className="relative mb-4">
+            <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+            <input
+              id="password"
+              type="password"
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                resetMessages();
+              }}
+              className="h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 pl-10 pr-3 text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+            />
+          </div>
+
+          {mode === 'signup' && (
+            <>
+              <label
+                htmlFor="confirm-password"
+                className="mb-2 block text-sm font-medium text-zinc-300"
+              >
+                Confirmar senha
+              </label>
+              <div className="relative mb-4">
+                <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                <input
+                  id="confirm-password"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    resetMessages();
+                  }}
+                  className="h-11 w-full rounded-lg border border-zinc-700 bg-zinc-950 pl-10 pr-3 text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                />
+              </div>
+            </>
+          )}
+
+          {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
+          {info && <p className="mb-4 text-sm text-green-500">{info}</p>}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex h-11 w-full items-center justify-center rounded-lg bg-orange-500 font-medium text-zinc-950 transition-colors hover:bg-orange-400 disabled:opacity-60"
+          >
+            {isSubmitting
+              ? 'Aguarde...'
+              : mode === 'login'
+                ? 'Entrar'
+                : 'Criar senha de acesso'}
+          </button>
+        </form>
       </div>
     </div>
   );

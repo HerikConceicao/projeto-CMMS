@@ -21,7 +21,9 @@ interface AssetManagementScreenProps {
 type Tab = 'validated' | 'pending';
 
 export function AssetManagementScreen({ onExit }: AssetManagementScreenProps) {
-  const { validatedAssets, provisionalAssets, isDesktopMode } = useAppContext();
+  const { assets, isDesktopMode } = useAppContext();
+  const validatedAssets = assets.filter((asset) => asset.status !== 'pending');
+  const provisionalAssets = assets.filter((asset) => asset.status === 'pending');
 
   const [tab, setTab] = useState<Tab>('validated');
   const [searchTerm, setSearchTerm] = useState('');
