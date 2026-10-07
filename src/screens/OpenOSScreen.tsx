@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, CheckCircle2, X } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { StepIndicator } from '../components/ui/StepIndicator';
@@ -13,6 +13,9 @@ import type { Asset, OrderOfService } from '../types';
 
 interface OpenOSScreenProps {
   onExit: () => void;
+  /** TAG vinda do link do QR Code (?ativo=TAG); pula direto para a confirmação do ativo. */
+  initialAssetTag?: string | null;
+  onInitialAssetTagHandled?: () => void;
 }
 
 type WizardStep = 'identify' | 'confirm' | 'details' | 'success';
@@ -25,7 +28,11 @@ const STEP_INDEX: Record<WizardStep, number> = {
   success: 3,
 };
 
-export function OpenOSScreen({ onExit }: OpenOSScreenProps) {
+export function OpenOSScreen({
+  onExit,
+  initialAssetTag = null,
+  onInitialAssetTagHandled,
+}: OpenOSScreenProps) {
   const { assets, problemas, ordersOfService, setOrdersOfService, currentUser, isDesktopMode } =
     useAppContext();
   const validatedAssets = assets.filter((a) => a.status !== 'pending');
@@ -33,6 +40,23 @@ export function OpenOSScreen({ onExit }: OpenOSScreenProps) {
   const [step, setStep] = useState<WizardStep>('identify');
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [createdOS, setCreatedOS] = useState<OrderOfService | null>(null);
+  const [tagNotice, setTagNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!initialAssetTag) return;
+    // Os ativos chegam do servidor; espera a lista carregar antes de procurar a TAG.
+    if (assets.length === 0) return;
+    const tag = initialAssetTag.trim().toLowerCase();
+    const found = validatedAssets.find((a) => a.assetNumber.trim().toLowerCase() === tag);
+    if (found) {
+      setSelectedAsset(found);
+      setStep('confirm');
+    } else {
+      setTagNotice(`Nenhum ativo validado encontrado com a TAG ${initialAssetTag}.`);
+    }
+    onInitialAssetTagHandled?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialAssetTag, assets]);
 
   const resetWizard = () => {
     setSelectedAsset(null);
@@ -95,6 +119,12 @@ export function OpenOSScreen({ onExit }: OpenOSScreenProps) {
 
         {step !== 'success' && (
           <StepIndicator steps={STEP_LABELS} currentIndex={STEP_INDEX[step]} />
+        )}
+
+        {step === 'identify' && tagNotice && (
+          <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+            {tagNotice}
+          </p>
         )}
 
         {step === 'identify' && (
